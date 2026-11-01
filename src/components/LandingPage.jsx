@@ -48,7 +48,7 @@ export default function LandingPage({ onParticipant, onAdmin }) {
           </h1>
           <h2 className="text-2xl font-bold text-[#e2e8f0] mb-3">Password Game</h2>
           <p className="text-[#94a3b8] text-base max-w-sm mx-auto">
-            35 diabolically hard rules. Only the most technical minds will crack them all.
+            20 diabolically hard rules. Only the most technical minds will crack them all.
           </p>
         </div>
 

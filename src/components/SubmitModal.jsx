@@ -21,10 +21,11 @@ function ConfettiParticle({ x, color, delay }) {
   );
 }
 
-export default function SubmitModal({ username, score, maxScore, rulesPassed, totalRules, timeTaken, onSubmit, onClose }) {
-  const [done, setSaving]    = useState(false);
-  const [saved, setSaved]    = useState(false);
-  const [dbError, setDbError] = useState('');
+export default function SubmitModal({ username, score, maxScore, rulesPassed, totalRules, onSubmit, onClose }) {
+  const [done, setSaving]       = useState(false);
+  const [saved, setSaved]       = useState(false);
+  const [dbError, setDbError]   = useState('');
+  const [copiedString, setCopiedString] = useState(false);
 
   const particles = Array.from({ length: 80 }, (_, i) => ({
     id: i,
@@ -34,17 +35,13 @@ export default function SubmitModal({ username, score, maxScore, rulesPassed, to
   }));
 
   const pct = Math.round((score / maxScore) * 100);
+  const isComplete = rulesPassed === totalRules;
+
   const grade =
     pct >= 95 ? '🏆 LEGENDARY' :
     pct >= 80 ? '🥇 EXCELLENT' :
     pct >= 60 ? '🥈 GREAT'     :
     pct >= 40 ? '🥉 GOOD'      : '💪 KEEP TRYING';
-
-  const formatTime = (ms) => {
-    const s = Math.floor(ms / 1000);
-    const m = Math.floor(s / 60);
-    return m > 0 ? `${m}m ${s % 60}s` : `${s}s`;
-  };
 
   const handleConfirm = async () => {
     setSaving(true);
@@ -70,12 +67,12 @@ export default function SubmitModal({ username, score, maxScore, rulesPassed, to
       `}</style>
       {particles.map(p => <ConfettiParticle key={p.id} {...p} />)}
 
-      <div className="glass-card p-8 w-full max-w-md text-center animate-float-in">
+      <div className="glass-card p-8 w-full max-w-md text-center animate-float-in max-h-[90vh] overflow-y-auto">
         <div className="text-6xl mb-4">
           {pct >= 95 ? '🏆' : pct >= 80 ? '🎉' : pct >= 60 ? '🎊' : '💪'}
         </div>
         <h2 className="text-3xl font-bold text-gradient mb-1">
-          {saved ? 'Score Saved!' : 'Game Complete!'}
+          {saved ? 'Score Saved!' : isComplete ? 'Game Completed!' : 'Progress Report'}
         </h2>
         <p className="font-semibold mb-4" style={{ color: '#f59e0b' }}>{grade}</p>
 
@@ -85,13 +82,12 @@ export default function SubmitModal({ username, score, maxScore, rulesPassed, to
           <p className="text-lg font-bold text-[#a78bfa]">{username}</p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3 mb-5">
+        {/* Stats Grid (timer removed from participant view) */}
+        <div className="grid grid-cols-3 gap-2 mb-5">
           {[
-            { label: `Score / ${maxScore}`, value: score,                    color: '#a78bfa' },
-            { label: 'Completion',           value: pct + '%',               color: '#10b981' },
+            { label: `Score / ${maxScore}`, value: score,                         color: '#a78bfa' },
+            { label: 'Completion',           value: pct + '%',                    color: '#10b981' },
             { label: 'Rules Passed',         value: `${rulesPassed}/${totalRules}`, color: '#3b82f6' },
-            { label: 'Time Taken',           value: formatTime(timeTaken),   color: '#f59e0b' },
           ].map(s => (
             <div key={s.label} className="p-3 rounded-xl" style={{ background: `${s.color}18`, border: `1px solid ${s.color}33` }}>
               <div className="text-xl font-bold" style={{ color: s.color }}>{s.value}</div>
@@ -99,6 +95,31 @@ export default function SubmitModal({ username, score, maxScore, rulesPassed, to
             </div>
           ))}
         </div>
+
+        {/* Completion string to be pasted on main site */}
+        {isComplete && (
+          <div className="p-4 rounded-xl border border-[#a78bfa]/40 bg-[#7c3aed]/15 mb-5 text-center">
+            <p className="text-xs font-semibold text-[#c4b5fd] mb-2 uppercase tracking-wide">
+              This is your string to be pasted on the main site
+            </p>
+            <div className="flex items-center justify-center gap-2">
+              <code className="text-lg font-mono font-bold tracking-wider px-3 py-1.5 bg-black/60 border border-[#a78bfa]/50 rounded-lg text-[#10b981] select-all">
+                suinegsaenihp
+              </code>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText('suinegsaenihp');
+                  setCopiedString(true);
+                  setTimeout(() => setCopiedString(false), 2000);
+                }}
+                className="btn-primary py-1.5 px-2.5 text-xs"
+              >
+                {copiedString ? 'Copied! ✅' : 'Copy'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Error */}
         {dbError && (
@@ -122,7 +143,7 @@ export default function SubmitModal({ username, score, maxScore, rulesPassed, to
                 {done ? '⏳ Saving...' : 'Save to Leaderboard 🏅'}
               </button>
               <button onClick={onClose} className="btn-danger px-4">
-                Skip
+                Close
               </button>
             </div>
           </>
