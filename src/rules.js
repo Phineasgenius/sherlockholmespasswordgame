@@ -50,7 +50,7 @@ export const RULES = [
     id: 1,
     category: 'basics',
     description: 'Your password must be at least 12 characters long.',
-    hint: 'Length matters. Aim for quality AND quantity.',
+    hint: 'Expand the length of your sequence.',
     check: (p) => p.length >= 12,
     reward: 5,
   },
@@ -58,15 +58,15 @@ export const RULES = [
     id: 2,
     category: 'basics',
     description: 'Your password must contain at least 2 uppercase letters and at least 2 lowercase letters.',
-    hint: 'Mix capital letters (A-Z) and lowercase letters (a-z).',
+    hint: 'Combine both uppercase (A-Z) and lowercase (a-z) letters.',
     check: (p) => (p.match(/[A-Z]/g) || []).length >= 2 && (p.match(/[a-z]/g) || []).length >= 2,
     reward: 10,
   },
   {
     id: 3,
     category: 'basics',
-    description: 'Your password must contain at least 2 special characters (!@#$%^&*_-).',
-    hint: 'Sprinkle in some !@#$ magic.',
+    description: 'Your password must contain at least 2 special symbols (!@#$%^&*_-).',
+    hint: 'Incorporate special symbols from standard keyboard punctuation (!@#$%^&*_-).',
     check: (p) => (p.match(/[!@#$%^&*_\-]/g) || []).length >= 2,
     reward: 10,
   },
@@ -76,15 +76,15 @@ export const RULES = [
     id: 4,
     category: 'math',
     description: 'The sum of all digits in your password must be a prime number.',
-    hint: 'Sum the digits (e.g. "a3b5" → 8). Primes: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31...',
+    hint: 'Add together every digit present in your password. The resulting sum must be a number divisible only by 1 and itself.',
     check: (p) => isPrime(sumDigits(p)),
     reward: 15,
   },
   {
     id: 5,
     category: 'math',
-    description: 'Your password must contain a two-digit perfect square (16, 25, 36, 49, 64, 81).',
-    hint: '16, 25, 36, 49, 64, or 81 must appear as a substring.',
+    description: 'Your password must contain a two-digit perfect square.',
+    hint: 'Think of an integer multiplied by itself whose product falls between 10 and 99.',
     check: (p) => /16|25|36|49|64|81/.test(p),
     reward: 15,
   },
@@ -93,16 +93,16 @@ export const RULES = [
   {
     id: 6,
     category: 'encoding',
-    description: 'Your password must contain the Morse code for "SOS" (... --- ...).',
-    hint: 'Include: ...---... (no spaces needed)',
+    description: 'Your password must contain the international distress signal in continuous Morse code.',
+    hint: 'The universal maritime call for help: three dots, three dashes, three dots (without spaces).',
     check: (p) => p.includes('...---...'),
     reward: 15,
   },
   {
     id: 7,
     category: 'encoding',
-    description: 'Your password must include a valid hexadecimal color code (# followed by 6 hex digits, e.g. #a3f0cc).',
-    hint: 'Format: #RRGGBB — like #ff0000 (red) or #a3f0cc.',
+    description: 'Your password must include a valid 6-digit hexadecimal color code.',
+    hint: 'Begins with a hash (#) followed by six hexadecimal digits representing RGB color channels.',
     check: (p) => /#[0-9a-fA-F]{6}/.test(p),
     reward: 15,
   },
@@ -111,8 +111,8 @@ export const RULES = [
   {
     id: 8,
     category: 'science',
-    description: 'Your password must include the chemical symbol of at least 3 different elements from the periodic table (e.g. Na, Fe, Au, Cl).',
-    hint: `Elements: ${Object.keys(PERIODIC).slice(0, 16).join(', ')}... (case-sensitive!)`,
+    description: 'Your password must include the chemical symbols of at least 3 distinct elements from the periodic table.',
+    hint: 'Chemical notation is strictly case-sensitive: a single capital letter, or a capital followed by a lowercase letter.',
     check: (p) => {
       const found = Object.keys(PERIODIC).filter(sym => p.includes(sym));
       return new Set(found).size >= 3;
@@ -122,8 +122,8 @@ export const RULES = [
   {
     id: 9,
     category: 'science',
-    description: 'Your password must include π (pi) to at least 5 decimal places: 3.14159',
-    hint: 'Include the string "3.14159" in your password.',
+    description: 'Your password must include the mathematical constant π (pi) to at least 5 decimal places.',
+    hint: 'Archimedes\' constant: start with 3 followed by its first 5 digits after the decimal point.',
     check: (p) => p.includes('3.14159'),
     reward: 15,
   },
@@ -132,16 +132,16 @@ export const RULES = [
   {
     id: 10,
     category: 'programming',
-    description: 'Your password must contain at least one git command (git add, git commit, git push, git pull, git merge, git rebase, git stash, git clone, git diff, git log).',
-    hint: 'Include a git command like: git_add, git_commit, git_push...',
+    description: 'Your password must contain a recognized Git version control command.',
+    hint: 'Think of common version control operations used to stage, record, sync, or inspect changes.',
     check: (p) => /git[_\-]?(add|commit|push|pull|merge|rebase|stash|clone|diff|log)/i.test(p),
     reward: 20,
   },
   {
     id: 11,
     category: 'programming',
-    description: 'Your password must include a valid HTTP status code: 200, 201, 301, 302, 400, 401, 403, 404, 500, 503.',
-    hint: 'Include one of: 200, 201, 301, 302, 400, 401, 403, 404, 500, 503',
+    description: 'Your password must include a standard 3-digit HTTP response status code.',
+    hint: 'A standard three-digit server status indicator for success, redirection, client error, or server error.',
     check: (p) => /200|201|301|302|400|401|403|404|500|503/.test(p),
     reward: 15,
   },
@@ -150,16 +150,16 @@ export const RULES = [
   {
     id: 12,
     category: 'cipher',
-    description: 'Your password must contain the ROT13 of the word "password" (which is "cnffjbeq").',
-    hint: 'ROT13("password") = "cnffjbeq". Include this exact string.',
+    description: 'Your password must contain the word "password" encrypted with the ROT13 cipher.',
+    hint: 'Rotate every character in the lowercase word "password" forward by 13 positions in the Latin alphabet.',
     check: (p) => p.includes('cnffjbeq'),
     reward: 15,
   },
   {
     id: 13,
     category: 'cipher',
-    description: 'Your password must contain a Caesar cipher (shift 3) decrypted word. Include the word "KHOOR" — its decrypted meaning is "HELLO".',
-    hint: 'Caesar-3 cipher: KHOOR → HELLO. Include "KHOOR" in your password.',
+    description: 'Your password must contain the greeting "HELLO" encrypted with a classical Caesar cipher (shift 3).',
+    hint: 'Shift each letter of "HELLO" 3 places forward in the uppercase alphabet (A becomes D).',
     check: (p) => p.includes('KHOOR'),
     reward: 15,
   },
@@ -168,8 +168,8 @@ export const RULES = [
   {
     id: 14,
     category: 'time',
-    description: () => `Your password must contain today's day of the month as a 2-digit number. Today is the ${new Date().getDate()}${['st','nd','rd'][((new Date().getDate()+90)%100-10)%10-1]||'th'}.`,
-    hint: () => `Include "${String(new Date().getDate()).padStart(2,'0')}" in your password.`,
+    description: 'Your password must contain today\'s day of the month as a 2-digit number.',
+    hint: 'Look at today\'s calendar date. If it is a single-digit day, pad it with a leading zero.',
     check: (p) => p.includes(String(new Date().getDate()).padStart(2, '0')),
     reward: 20,
     isDynamic: true,
@@ -177,14 +177,8 @@ export const RULES = [
   {
     id: 15,
     category: 'time',
-    description: () => {
-      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-      return `Your password must contain the current month name ("${monthNames[new Date().getMonth()]}").`;
-    },
-    hint: () => {
-      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-      return `Include "${monthNames[new Date().getMonth()]}" in your password.`;
-    },
+    description: 'Your password must contain the full, capitalized name of the current calendar month.',
+    hint: 'Spell out the current month in English starting with an uppercase letter.',
     check: (p) => {
       const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
       return p.includes(monthNames[new Date().getMonth()]);
@@ -197,8 +191,8 @@ export const RULES = [
   {
     id: 16,
     category: 'roman',
-    description: 'Your password must include Roman numerals that sum to exactly 42 (e.g. XL+II = XLII, or combinations summing to 42).',
-    hint: 'Include Roman numeral "XLII" (= 42) or any combo of Roman numerals summing to 42.',
+    description: 'Your password must include an isolated group of Roman numerals whose values sum to exactly 42.',
+    hint: 'Compose valid Roman numerals (I, V, X, L, C, D, M) that total 42. Separate them from adjacent Roman letters with underscores or symbols.',
     check: (p) => {
       const m = p.match(/[IVXLCDM]+/g);
       if (!m) return false;
@@ -209,8 +203,8 @@ export const RULES = [
   {
     id: 17,
     category: 'roman',
-    description: 'Your password must contain the Roman numeral for the current year (MMXXVI = 2026).',
-    hint: `Include "MMXXVI" (= ${new Date().getFullYear()}) in your password.`,
+    description: 'Your password must contain the current calendar year written in Roman numerals.',
+    hint: 'Translate the four digits of the current calendar year into classic Roman numeral notation.',
     check: (p) => p.includes('MMXXVI'),
     reward: 20,
   },
@@ -219,24 +213,24 @@ export const RULES = [
   {
     id: 18,
     category: 'advanced',
-    description: 'Your password must contain a valid UUID v4 pattern (8-4-4-4-12 hex chars, e.g. 550e8400-e29b-41d4-a716-446655440000).',
-    hint: 'Format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx (hex characters separated by dashes)',
+    description: 'Your password must contain a valid UUID version 4 identifier.',
+    hint: 'A 36-character hyphenated string conforming to UUIDv4 specifications (with standard hex groups and version bits).',
     check: (p) => /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/i.test(p),
     reward: 30,
   },
   {
     id: 19,
     category: 'advanced',
-    description: 'Your password must contain a valid SHA-256-like hash prefix: exactly 16 consecutive lowercase hex characters.',
-    hint: 'Include 16 consecutive hex chars: 0-9 and a-f only, e.g. "a3f0c1d2e4b56789"',
+    description: 'Your password must contain a continuous sequence of at least 16 lowercase hexadecimal characters.',
+    hint: 'Sixteen uninterrupted characters drawn exclusively from 0-9 and a-f.',
     check: (p) => /[0-9a-f]{16}/.test(p),
     reward: 30,
   },
   {
     id: 20,
     category: 'advanced',
-    description: 'FINAL BOSS: Your password must start with "P@55w0rd" AND end with "!!END!!" AND contain a 5+ character palindrome substring (e.g. "racecar" or "madam").',
-    hint: 'Start with P@55w0rd, end with !!END!!, and include a palindrome like "racecar", "madam", "level", "abcba"',
+    description: 'FINAL BOSS: Your password must begin with "P@55w0rd", conclude with "!!END!!", and incorporate a palindrome of at least 5 characters.',
+    hint: 'Start and end as instructed, and embed a symmetrical word or character sequence of length 5 or greater that reads identically in both directions.',
     check: (p) => {
       if (!p.startsWith('P@55w0rd') || !p.endsWith('!!END!!')) return false;
       for (let i = 0; i < p.length - 4; i++) {

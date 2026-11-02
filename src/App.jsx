@@ -286,6 +286,11 @@ export default function App() {
             <span className="badge badge-success">✅ {passingCount} passing</span>
             <span className="badge badge-error">❌ {activeRules - passingCount} failing</span>
             <span className="badge badge-info">🔒 {TOTAL_RULES - activeRules} locked</span>
+            {!gameWon && (
+              <span className="badge badge-warning text-xs ml-auto">
+                🔒 Flag string unlocks at {TOTAL_RULES}/{TOTAL_RULES}
+              </span>
+            )}
           </div>
         )}
 

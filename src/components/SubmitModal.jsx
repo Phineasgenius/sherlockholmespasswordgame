@@ -27,15 +27,18 @@ export default function SubmitModal({ username, score, maxScore, rulesPassed, to
   const [dbError, setDbError]   = useState('');
   const [copiedString, setCopiedString] = useState(false);
 
-  const particles = Array.from({ length: 80 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    color: COLORS[Math.floor(Math.random() * COLORS.length)],
-    delay: Math.random() * 2,
-  }));
+  const isComplete = rulesPassed === totalRules;
+
+  const particles = isComplete
+    ? Array.from({ length: 80 }, (_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        delay: Math.random() * 2,
+      }))
+    : [];
 
   const pct = Math.round((score / maxScore) * 100);
-  const isComplete = rulesPassed === totalRules;
 
   const grade =
     pct >= 95 ? '🏆 LEGENDARY' :
@@ -69,12 +72,14 @@ export default function SubmitModal({ username, score, maxScore, rulesPassed, to
 
       <div className="glass-card p-8 w-full max-w-md text-center animate-float-in max-h-[90vh] overflow-y-auto">
         <div className="text-6xl mb-4">
-          {pct >= 95 ? '🏆' : pct >= 80 ? '🎉' : pct >= 60 ? '🎊' : '💪'}
+          {isComplete ? '🏆' : pct >= 70 ? '🎯' : '🧩'}
         </div>
         <h2 className="text-3xl font-bold text-gradient mb-1">
-          {saved ? 'Score Saved!' : isComplete ? 'Game Completed!' : 'Progress Report'}
+          {saved ? 'Score Saved!' : isComplete ? 'Game Completed!' : 'Checkpoint Submission'}
         </h2>
-        <p className="font-semibold mb-4" style={{ color: '#f59e0b' }}>{grade}</p>
+        <p className="font-semibold mb-4" style={{ color: isComplete ? '#10b981' : '#f59e0b' }}>
+          {grade}
+        </p>
 
         {/* Player chip */}
         <div className="mb-4 p-3 rounded-xl" style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)' }}>
@@ -82,7 +87,7 @@ export default function SubmitModal({ username, score, maxScore, rulesPassed, to
           <p className="text-lg font-bold text-[#a78bfa]">{username}</p>
         </div>
 
-        {/* Stats Grid (timer removed from participant view) */}
+        {/* Stats Grid */}
         <div className="grid grid-cols-3 gap-2 mb-5">
           {[
             { label: `Score / ${maxScore}`, value: score,                         color: '#a78bfa' },
@@ -96,8 +101,8 @@ export default function SubmitModal({ username, score, maxScore, rulesPassed, to
           ))}
         </div>
 
-        {/* Completion string to be pasted on main site */}
-        {isComplete && (
+        {/* Complete vs Incomplete flag status */}
+        {isComplete ? (
           <div className="p-4 rounded-xl border border-[#a78bfa]/40 bg-[#7c3aed]/15 mb-5 text-center">
             <p className="text-xs font-semibold text-[#c4b5fd] mb-2 uppercase tracking-wide">
               This is your string to be pasted on the main site
@@ -119,6 +124,21 @@ export default function SubmitModal({ username, score, maxScore, rulesPassed, to
               </button>
             </div>
           </div>
+        ) : (
+          <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 mb-5 text-center">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <span className="text-xl">🔒</span>
+              <p className="text-sm font-bold text-amber-300">
+                Secret Flag Locked
+              </p>
+            </div>
+            <p className="text-xs text-[#cbd5e1] leading-relaxed">
+              The secret string to be pasted on the main site will <span className="text-amber-200 font-semibold">only be unlocked when all {totalRules} rules are completed</span>.
+            </p>
+            <p className="text-xs text-[#94a3b8] mt-2">
+              Current progress: <span className="text-amber-300 font-medium">{rulesPassed} of {totalRules} rules</span> conquered ({totalRules - rulesPassed} remaining).
+            </p>
+          </div>
         )}
 
         {/* Error */}
@@ -131,8 +151,9 @@ export default function SubmitModal({ username, score, maxScore, rulesPassed, to
         {!saved ? (
           <>
             <p className="text-sm text-[#94a3b8] mb-4">
-              Save your score to the leaderboard as{' '}
-              <span className="text-[#a78bfa] font-semibold">{username}</span>?
+              {isComplete
+                ? `Save your final victory score to the leaderboard as ${username}?`
+                : `Save your intermediate score (${score} pts) to the leaderboard as ${username}?`}
             </p>
             <div className="flex gap-3">
               <button
